@@ -60,7 +60,7 @@ resource "azurerm_virtual_machine_extension" "post-web" {
 
   settings = <<SETTINGS
     {
-        "commandToExecute": "apt -y update && apt -y upgrade && apt -y install nginx"
+        "commandToExecute": "apt -y update && apt -y upgrade && apt -y install nginx && systemctl start nginx"
     }
 SETTINGS
 }
