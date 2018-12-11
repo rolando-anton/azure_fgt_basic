@@ -1,0 +1,7 @@
+location = "westus2"
+resource_group_name = "fgttest04"
+StorageAccountName = "fgttest04storage04"
+vmsize = "Standard_F1"
+fgtvmsize = "Standard_F4"
+adminUsername = "fortinet"
+adminPassword = "Passw0rd!123"
