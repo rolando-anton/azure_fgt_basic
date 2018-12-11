@@ -75,6 +75,33 @@ resource "azurerm_virtual_machine" "fgvm01" {
     computer_name  = "FGVM01"
     admin_username = "${var.adminUsername}"
     admin_password = "${var.adminPassword}"
+    custom_data = <<CUSTOMDATA
+   config system interface
+   	edit "port2"
+        set vdom "root"
+        set mode dhcp
+        set type physical
+        set snmp-index 2
+        set defaultgw disable
+        set dns-server-override disable
+   end
+   config firewall policy
+    	edit 1
+        	set name "toinet"
+        	set srcintf "port2"
+        	set dstintf "port1"
+        	set srcaddr "all"
+        	set dstaddr "all"
+        	set action accept
+        	set schedule "always"
+        	set service "ALL"
+        	set logtraffic all
+        	set nat enable
+    		next
+	end
+
+
+    CUSTOMDATA
   }
 
   os_profile_linux_config {
