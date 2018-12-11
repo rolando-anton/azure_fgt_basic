@@ -1,6 +1,6 @@
 # VNET definition
 
-resource "azurerm_virtual_network" "c" {
+resource "azurerm_virtual_network" "frontend" {
   name                = "SecureVNET"
   address_space       = ["10.20.0.0/16"]
   location            = "${var.location}"

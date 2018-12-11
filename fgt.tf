@@ -9,6 +9,8 @@ resource "azurerm_network_interface" "FortiGateVM-nic01" {
     subnet_id                     = "${azurerm_subnet.external.id}"
     private_ip_address_allocation = "static"
     private_ip_address            = "10.20.1.100"
+    public_ip_address_id = "${azurerm_public_ip.fgvm01-pip.id}"
+
   }
 
   enable_ip_forwarding = "true"
