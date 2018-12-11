@@ -187,12 +187,6 @@ resource "azurerm_route_table" "InternalToExternalLB" {
     next_hop_in_ip_address = "10.20.2.100"
   }
 
-  route {
-    name                   = "ProtectedNetwork"
-    address_prefix         = "10.20.0.0/16"
-    next_hop_type          = "VirtualAppliance"
-    next_hop_in_ip_address = "10.20.2.100"
-  }
 }
 
 
