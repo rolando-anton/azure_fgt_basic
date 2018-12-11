@@ -202,3 +202,4 @@ resource "azurerm_subnet_route_table_association" "internal_route" {
   route_table_id = "${azurerm_route_table.InternalToExternalLB.id}"
 }
 
+
