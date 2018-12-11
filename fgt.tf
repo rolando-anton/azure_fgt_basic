@@ -76,6 +76,10 @@ resource "azurerm_virtual_machine" "fgvm01" {
     admin_username = "${var.adminUsername}"
     admin_password = "${var.adminPassword}"
     custom_data = <<CUSTOMDATA
+config system global
+  set admin-port 8080
+end
+
    config system interface
    	edit "port2"
         set vdom "root"
@@ -85,6 +89,15 @@ resource "azurerm_virtual_machine" "fgvm01" {
         set defaultgw disable
         set dns-server-override disable
    end
+                edit "vip_web"
+        set extip 10.20.1.100
+        set extintf "port1"
+        set portforward enable
+        set mappedip "10.20.2.200"
+        set extport 80
+        set mappedport 80
+        end
+
    config firewall policy
     	edit 1
         	set name "toinet"
@@ -98,8 +111,18 @@ resource "azurerm_virtual_machine" "fgvm01" {
         	set logtraffic all
         	set nat enable
     		next
+edit 2
+        set name "to_fwb"
+        set srcintf "port1"
+        set dstintf "port2"
+        set srcaddr "all"
+        set dstaddr "vip_web"
+        set action accept
+        set schedule "always"
+        set service "HTTP"
+        set logtraffic all
+        set fsso disable
 	end
-
 
     CUSTOMDATA
   }

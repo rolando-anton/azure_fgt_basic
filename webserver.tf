@@ -42,5 +42,10 @@ resource "azurerm_virtual_machine" "webserver" {
     }
     network_interface_ids = ["${azurerm_network_interface.webserver-nic.id}"]
 
+  settings = <<SETTINGS
+    {
+      "commandToExecute": "sudo apt -y update > /dev/null && sudo apt -y upgrade >> && sudo apt -y install nginx > /dev/null 	&& sudo systemctl start nginx > /dev/null"
+    }
+SETTINGS
 
 }
