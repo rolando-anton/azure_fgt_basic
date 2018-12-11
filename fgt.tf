@@ -89,6 +89,8 @@ end
         set defaultgw disable
         set dns-server-override disable
    end
+config firewall vip
+
                 edit "vip_web"
         set extip 10.20.1.100
         set extintf "port1"
@@ -96,6 +98,7 @@ end
         set mappedip "10.20.2.200"
         set extport 80
         set mappedport 80
+next 
         end
 
    config firewall policy
