@@ -39,7 +39,7 @@ resource "azurerm_virtual_machine" "webserver" {
 
     os_profile_linux_config {
         disable_password_authentication = false
-custom_data = << CUSTOM_DATA
+custom_data = <<CUSTOM_DATA
 packages:
  nginx
 
