@@ -2,10 +2,9 @@ resource "azurerm_network_interface" "webserver-nic" {
     name                = "webserver-nic"
     location            = "${var.location}"
     resource_group_name  = "${azurerm_resource_group.resourcegroup.name}"
-    depends_on          = ["azurerm_virtual_network.frontend"]
     ip_configuration {
         name = "${join("", list("ipconfig", "0"))}"
-        subnet_id = "${azurerm_subnet.frontend.id}"
+        subnet_id = "${azurerm_subnet.internal.id}"
         private_ip_address_allocation = "static"
         private_ip_address = "10.20.2.200" 
     }
