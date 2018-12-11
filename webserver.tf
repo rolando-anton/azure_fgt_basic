@@ -39,15 +39,26 @@ resource "azurerm_virtual_machine" "webserver" {
 
     os_profile_linux_config {
         disable_password_authentication = false
-custom_data = <<CUSTOM_DATA
-packages:
- nginx
-
-CUSTOM_DATA
-
     }
     network_interface_ids = ["${azurerm_network_interface.webserver-nic.id}"]
 
 }
+
+
+
+resource "azurerm_virtual_machine_extension" "post-web" {
+  name                 = "web-vm-customscript"
+  location             = "${var.location}"
+  resource_group_name  = "${azurerm_resource_group.resourcegroup.name}"
+  virtual_machine_name = "${azurerm_virtual_machine.webserver.name}"  
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
+
+  settings = <<SETTINGS
+    {
+        "commandToExecute": "apt -y install nginx"
+    }
+SETTINGS
 
 
