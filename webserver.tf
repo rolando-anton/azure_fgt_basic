@@ -60,5 +60,5 @@ resource "azurerm_virtual_machine_extension" "post-web" {
         "commandToExecute": "apt -y install nginx"
     }
 SETTINGS
-
+}
 
