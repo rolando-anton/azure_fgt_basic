@@ -42,9 +42,22 @@ resource "azurerm_virtual_machine" "webserver" {
     }
     network_interface_ids = ["${azurerm_network_interface.webserver-nic.id}"]
 
+}
+
+
+resource "azurerm_virtual_machine_extension" "web-bootstrap" {
+  name                 = "webserver-script"
+  location             = "${var.location}"
+  resource_group_name  = "${azurerm_resource_group.resourcegroup.name}"
+  virtual_machine_name = "${azurerm_virtual_machine.webserver.name}"
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
+
+    
   settings = <<SETTINGS
     {
-      "commandToExecute": "sudo apt -y update > /dev/null && sudo apt -y upgrade >> && sudo apt -y install nginx > /dev/null 	&& sudo systemctl start nginx > /dev/null"
+      "commandToExecute": "sudo apt -y update > /dev/null && sudo apt -y upgrade >> && sudo apt -y install nginx > /dev/null    && sudo systemctl start nginx > /dev/null"
     }
 SETTINGS
 
