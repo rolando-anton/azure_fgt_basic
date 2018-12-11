@@ -15,6 +15,9 @@ resource "azurerm_virtual_machine" "webserver" {
   location              = "${var.location}"
   resource_group_name   = "${azurerm_resource_group.resourcegroup.name}"
   vm_size               = "${var.vmsize}"
+ depends_on          = ["azurerm_virtual_machine.fgvm01"]
+
+
 
     storage_image_reference {
         publisher = "Canonical"
@@ -57,7 +60,7 @@ resource "azurerm_virtual_machine_extension" "post-web" {
 
   settings = <<SETTINGS
     {
-        "commandToExecute": "apt -y install nginx"
+        "commandToExecute": "apt -y update && apt -y upgrade && apt -y install nginx"
     }
 SETTINGS
 }
