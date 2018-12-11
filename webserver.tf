@@ -7,7 +7,7 @@ resource "azurerm_network_interface" "webserver-nic" {
         name = "${join("", list("ipconfig", "0"))}"
         subnet_id = "${azurerm_subnet.frontend.id}"
         private_ip_address_allocation = "static"
-        private_ip_address = "10.30.1.200" 
+        private_ip_address = "10.20.2.200" 
     }
 }
 
