@@ -25,8 +25,8 @@ resource "azurerm_subnet" "internal" {
 
 # Public IPs for publications
 
-resource "azurerm_public_ip" "fgvm01-pip" {
-  name                         = "fgvm01-pip"
+resource "azurerm_public_ip" "fwbvm01-pip" {
+  name                         = "fwbvm01-pip"
   location                     = "${var.location}"
   resource_group_name          = "${azurerm_resource_group.resourcegroup.name}"
   public_ip_address_allocation = "static"
@@ -123,4 +123,75 @@ resource "azurerm_route_table" "InternalToExternalLB" {
 resource "azurerm_subnet_route_table_association" "internal_route" {
   subnet_id      = "${azurerm_subnet.internal.id}"
   route_table_id = "${azurerm_route_table.InternalToExternalLB.id}"
+}
+
+
+resource "azurerm_application_gateway" "appgw" {
+    name                = "${azurerm_virtual_network.frontend.name}"
+    location            = "${var.location}"
+  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
+    sku {
+        name           = "Standard_Small"
+        tier           = "Standard"
+        capacity       = 2
+    }
+    gateway_ip_configuration {
+        name         = "${azurerm_virtual_network.frontend.name}-gwip-cfg"
+  subnet_id      = "${azurerm_subnet.internal.id}"
+    }
+    frontend_port {
+        name         = "${azurerm_virtual_network.frontend.name}-feport"
+        port         = 80
+    }
+    frontend_ip_configuration {
+        name         = "${azurerm_virtual_network.frontend.name}-gwip-feip"  
+        private_ip_address_id = "${azurerm_public_ip.pip.id}"
+        subnet_id      = "${azurerm_subnet.internal.id}"
+        private_ip_address_allocation = "dynamic"
+    }
+
+    backend_address_pool {
+        name = "${azurerm_virtual_network.frontend.name}-beap"
+        ip_address_list = ["${element(azurerm_network_interface.nic.*.private_ip_address, count.index)}"] 
+    }
+    backend_http_settings {
+        name                  = "${azurerm_virtual_network.frontend.name}-be-htst"
+        cookie_based_affinity = "Disabled"
+        port                  = 80
+        protocol              = "Http"
+        request_timeout        = 1
+    }
+    http_listener {
+        name                                  = "${azurerm_virtual_network.frontend.name}-httplstn"
+        frontend_ip_configuration_name        = "${azurerm_virtual_network.frontend.name}-feip"
+        frontend_port_name                    = "${azurerm_virtual_network.frontend.name}-feport"
+        protocol                              = "Http"
+    }
+    request_routing_rule {
+        name                       = "${azurerm_virtual_network.frontend.name}-rqrt"
+        rule_type                  = "Basic"
+        http_listener_name         = "${azurerm_virtual_network.frontend.name}-httplstn"
+        backend_address_pool_name  = "${azurerm_virtual_network.frontend.name}-beap"
+        backend_http_settings_name = "${azurerm_virtual_network.frontend.name}-be-htst"
+    }
+}
+
+resource "azurerm_app_service_plan" "dvwa" {
+  name                = "dvwa-plan"
+  location            = "${var.location}"
+  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
+
+  sku {
+    tier = "Free"
+    size = "F1"
+  }
+}
+
+resource "azurerm_app_service" "dvwa" {
+  name                = "dvwa-app"
+  location            = "${var.location}"
+  resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
+  app_service_plan_id = "${azurerm_app_service_plan.dvwa.id}"
+  site_config {
+    php_version = "7.2"  }
 }
