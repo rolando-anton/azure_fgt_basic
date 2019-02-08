@@ -9,7 +9,7 @@ resource "azurerm_network_interface" "FortiWebVM-nic01" {
     subnet_id                     = "${azurerm_subnet.external.id}"
     private_ip_address_allocation = "static"
     private_ip_address            = "10.20.1.100"
-    public_ip_address_id          = "${azurerm_public_ip.fgvm01-pip.id}"
+    public_ip_address_id          = "${azurerm_public_ip.fwbvm01-pip.id}"
   }
 
   enable_ip_forwarding = "true"
@@ -34,7 +34,7 @@ resource "azurerm_network_interface" "FortiWebVM-nic02" {
 
 }
 
-resource "azurerm_virtual_machine" "fgvm01" {
+resource "azurerm_virtual_machine" "fwbvm01" {
   name                = "FWBVM01"
   location            = "${var.location}"
   resource_group_name = "${azurerm_resource_group.resourcegroup.name}"
